@@ -14,7 +14,7 @@
         android:id="@+id/txt_msg"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Select 2 APs"
+        android:text="Select 3 APs"
         android:layout_centerHorizontal="true"
         android:textAlignment="center"
         android:textColor="@android:color/holo_green_dark"

@@ -103,7 +103,7 @@ public class MainActivity extends AppCompatActivity {
                 }
 
                 aps.add(position);
-                if (aps.size() > 2)
+                if (aps.size() > 3)
                     aps.remove(0);
 
 
@@ -123,7 +123,7 @@ public class MainActivity extends AppCompatActivity {
                         editText = (EditText)dialogView.findViewById(R.id.y_cord);
                         float ycord = Float.parseFloat(editText.getText().toString());
                         apCoordinats.add(new Pair<Float, Float>(xcord,ycord));
-                        if (apCoordinats.size() > 2)
+                        if (apCoordinats.size() > 3)
                             apCoordinats.remove(0);
                     }
                 });
@@ -145,8 +145,8 @@ public class MainActivity extends AppCompatActivity {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (apCoordinats.size() != 2 || aps.size() != 2) {
-                    CommonUtils.toast(getApplicationContext(), "Please select exactly 2 aps");
+                if (apCoordinats.size() != 3 || aps.size() != 3) {
+                    CommonUtils.toast(getApplicationContext(), "Please select exactly 3 aps");
                     return;
                 }
                 Intent tracker = new Intent(MainActivity.this, TrackerActivity.class);
@@ -154,8 +154,11 @@ public class MainActivity extends AppCompatActivity {
                 tracker.putExtra(TrackerActivity.FIRST_Y_CORD, apCoordinats.get(0).second);
                 tracker.putExtra(TrackerActivity.SECOND_X_CORD, apCoordinats.get(1).first);
                 tracker.putExtra(TrackerActivity.SECOND_Y_CORD, apCoordinats.get(1).second);
+                tracker.putExtra(TrackerActivity.THIRD_X_CORD, apCoordinats.get(2).first);
+                tracker.putExtra(TrackerActivity.THIRD_Y_CORD, apCoordinats.get(2).second);
                 tracker.putExtra(TrackerActivity.FIRST_AP, scanResults.get(aps.get(0)));
                 tracker.putExtra(TrackerActivity.SECOND_AP, scanResults.get(aps.get(1)));
+                tracker.putExtra(TrackerActivity.THIRD_AP, scanResults.get(aps.get(2)));
                 startActivity(tracker);
             }
         });
@@ -183,6 +186,7 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public void onReceive(Context context, Intent intent) {
+            unregisterReceiver(wifiReceiver);
             CommonUtils.log("Received");
             setupWifiList();
         }
