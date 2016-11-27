@@ -84,7 +84,7 @@ public class MainActivity extends AppCompatActivity {
         ArrayList<String> wifis  = new ArrayList<>();
         CommonUtils.log("Size: "+scanResults.size());
         for (ScanResult scanResult : scanResults) {
-            wifis.add(scanResult.SSID);
+            wifis.add(scanResult.SSID+"("+scanResult.level+")");
             CommonUtils.log(scanResult.SSID+":"+scanResult.level);
         }
         final ListView listView = (ListView)findViewById(R.id.list_wifi);
@@ -162,6 +162,8 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(tracker);
             }
         });
+
+        wifiManager.startScan();
     }
 
     /*@Override
@@ -188,6 +190,7 @@ public class MainActivity extends AppCompatActivity {
         public void onReceive(Context context, Intent intent) {
             unregisterReceiver(wifiReceiver);
             CommonUtils.log("Received");
+            //CommonUtils.toast(getApplicationContext(), "Refreshed");
             setupWifiList();
         }
     }
