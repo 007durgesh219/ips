@@ -74,7 +74,7 @@ public class TrackerActivity extends AppCompatActivity {
         TextView ap3coord = (TextView) findViewById(R.id.ap3_coord);
 
         ap1name.setText(scanResults.get(0).SSID);
-        ap2name.setText(scanResults.get(2).SSID);
+        ap2name.setText(scanResults.get(1).SSID);
         ap3name.setText(scanResults.get(2).SSID);
 
         ap1coord.setText(apCoordinates.get(0).first+","+apCoordinates.get(0).second);
@@ -86,18 +86,23 @@ public class TrackerActivity extends AppCompatActivity {
         ap3level.setText(scanResults.get(2).level+" dBm");
 
 
-        calculateResult();
-
         wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
         wifiReceiver = new TrackerActivity.WifiReceiver();
         registerReceiver(wifiReceiver,new IntentFilter(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION));
-        wifiManager.startScan();
+
+        calculateResult();
     }
 
     private void calculateResult() {
+        ap1level.setText(scanResults.get(0).level+" dBm");
+        ap2level.setText(scanResults.get(1).level+" dBm");
+        ap3level.setText(scanResults.get(2).level+" dBm");
         double r0 = Math.pow(10, (scanResults.get(0).level - c)/m);
         double r1 = Math.pow(10, (scanResults.get(1).level - c)/m);
         double r3 = Math.pow(10, (scanResults.get(2).level - c)/m);
+        ap1dist.setText(String.format("%.2f", r0)+"m");
+        ap2dist.setText(String.format("%.2f", r1)+"m");
+        ap3dist.setText(String.format("%.2f", r3)+"m");
         double d = Math.sqrt(Math.pow(apCoordinates.get(0).first-apCoordinates.get(1).first, 2) +
                         Math.pow(apCoordinates.get(0).second-apCoordinates.get(1).second, 2));
         double a = (r0*r0 - r1*r1 + d*d) / 2*d ;
@@ -117,6 +122,7 @@ public class TrackerActivity extends AppCompatActivity {
         } else {
             result.setText(p31.first+", "+p31.second);
         }
+        wifiManager.startScan();
     }
 
     public class WifiReceiver extends BroadcastReceiver {
@@ -126,12 +132,12 @@ public class TrackerActivity extends AppCompatActivity {
             CommonUtils.log("Received");
             List<ScanResult> scanResults0 = wifiManager.getScanResults();
             for (ScanResult scanResult : scanResults0) {
-                if (scanResult.BSSID == scanResults.get(0).BSSID) {
+                if (scanResult.SSID.equals(scanResults.get(0).SSID)) {
                     scanResults.set(0, scanResult);
-                } else if (scanResult.BSSID == scanResults.get(1).BSSID) {
-                    scanResults.set(0, scanResult);
-                } else if (scanResult.BSSID == scanResults.get(2).BSSID) {
+                } else if (scanResult.SSID.equals(scanResults.get(1).SSID)) {
                     scanResults.set(1, scanResult);
+                } else if (scanResult.SSID.equals(scanResults.get(2).SSID)) {
+                    scanResults.set(2, scanResult);
                 }
             }
             calculateResult();
